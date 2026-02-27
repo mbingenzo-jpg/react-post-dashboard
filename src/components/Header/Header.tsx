@@ -1,29 +1,28 @@
-
 import React from 'react';
-import { Box, Typography, Switch, FormControlLabel } from '@mui/material';
-import { useColorTheme } from '../../context/ThemeContext'; 
+import { useThemeContext } from '../../context/ThemeContext';
+import { Sun, Moon } from 'lucide-react';
 
-const Header: React.FC = () => {
-  const { mode, toggleTheme } = useColorTheme();
+export const Header: React.FC = () => {
+  const { mode, toggleTheme } = useThemeContext();
 
   return (
-    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-      <Typography variant="h4" sx={{ color: 'primary.main', fontWeight: 'bold' }}>
-        Post Dashboard
-      </Typography>
+    <header className="flex justify-between items-center w-full">
+      <div className="flex items-center gap-2">
+        <h1 className="text-2xl md:text-3xl font-black tracking-tighter text-slate-900 dark:text-white uppercase">
+          POST<span className="text-red-600">DASHBOARD</span>
+        </h1>
+      </div>
       
-      <FormControlLabel
-        control={
-          <Switch 
-            checked={mode === 'dark'} 
-            onChange={toggleTheme} 
-            color="primary" 
-          />
-        }
-        label={mode === 'dark' ? 'Dark Mode' : 'Light Mode'}
-      />
-    </Box>
+      <button 
+        onClick={toggleTheme}
+        className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+      >
+        {mode === 'dark' ? (
+          <Sun className="w-5 h-5 text-yellow-500" />
+        ) : (
+          <Moon className="w-5 h-5 text-red-600" />
+        )}
+      </button>
+    </header>
   );
 };
-
-export default Header;

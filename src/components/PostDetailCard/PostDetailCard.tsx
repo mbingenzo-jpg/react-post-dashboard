@@ -1,53 +1,44 @@
 import React from 'react';
-import { Typography, Button, Box, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
+import { Trash2 } from 'lucide-react';
 import { Post } from '../../interfaces/post.interface';
-import { User } from '../../interfaces/user.interface';
-
+import { User as UserType } from '../../interfaces/user.interface';
 interface PostDetailCardProps {
   post: Post;
-  user: User;
+  user: UserType;
   onClose: () => void;
   onDelete: (id: number) => void;
 }
 
-const PostDetailCard: React.FC<PostDetailCardProps> = ({ post, user, onClose, onDelete }) => {
+export const PostDetailCard: React.FC<PostDetailCardProps> = ({ post, user, onClose, onDelete }) => {
   return (
-   <Dialog 
-      open={true} 
-      onClose={onClose} 
-      maxWidth="sm" 
-      fullWidth
-    >
-      <DialogTitle sx={{ pb: 1 }} component="div">
-        <Typography component="div" sx={{ fontSize: '0.75rem', color: '#666', mb: 1 }}>
-          post pubblicato da: <strong>{user.name}</strong> alias{' '}
-          <Box component="span" sx={{ color: 'primary.main', textDecoration: 'underline' }}>
-            {user.username}
-          </Box>
-        </Typography>
-        
-        <Typography variant="h4" component="div" sx={{ color: 'primary.main', fontWeight: 'bold' }}>
-          {post.title}
-        </Typography>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md animate-in fade-in duration-300">
+      <div 
+        className="relative w-full max-w-xl bg-white dark:bg-slate-900 rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in duration-200 p-8 border border-slate-200 dark:border-slate-800"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <p className="text-xs text-slate-500 mb-2 uppercase tracking-tighter">
+          post pubblicato da: <span className="font-bold text-red-800">{user.name} alias {user.username}</span>
+        </p>
 
-      </DialogTitle>
-      
-      <DialogContent dividers>
-        <Typography sx={{ fontSize: '1.1rem', color: 'text.primary', py: 1 }}>
+        <h2 className="text-3xl font-bold text-red-700 dark:text-red-500 mb-6 leading-tight">
+          {post.title}
+        </h2>
+
+        <p className="text-slate-700 dark:text-slate-300 leading-relaxed mb-10">
           {post.body}
-        </Typography>
-      </DialogContent>
-      
-      <DialogActions sx={{ p: 2, justifyContent: 'space-between' }}>
-        <Button variant="outlined" color="primary" onClick={onClose}>
-          Chiudi
-        </Button>
-        <Button variant="contained" color="error" onClick={() => onDelete(post.id)}>
-          Elimina Card
-        </Button>
-      </DialogActions>
-    </Dialog>
+        </p>
+
+        <div className="flex flex-wrap gap-3">
+          <button onClick={onClose} className="btn-red-filled">
+            Chiudi
+          </button>
+          
+          <button onClick={() => onDelete(post.id)} className="btn-red-outline">
+            <Trash2 className="w-5 h-5" /> Elimina Post
+          </button>
+        </div>
+      </div>
+      <div className="absolute inset-0 -z-10" onClick={onClose}></div>
+    </div>
   );
 };
-
-export default PostDetailCard;

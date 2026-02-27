@@ -1,46 +1,40 @@
+import React, { createContext, useContext, useEffect, useState } from 'react';
 
-import React, { createContext, useState, useMemo, useContext } from 'react';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { CssBaseline } from '@mui/material';
-
+type ThemeMode = 'light' | 'dark';
 
 interface ThemeContextType {
-  mode: 'light' | 'dark';
+  mode: ThemeMode;
   toggleTheme: () => void;
 }
 
-const ThemeContext = createContext<ThemeContextType>({
-  mode: 'light',
-  toggleTheme: () => {},
-});
+const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-export const useColorTheme = () => useContext(ThemeContext);
+export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [mode, setMode] = useState<ThemeMode>(
+    (localStorage.getItem('theme') as ThemeMode) || 'light'
+  );
 
-export const ThemeContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [mode, setMode] = useState<'light' | 'dark'>('light');
-
-  const toggleTheme = () => {
-    setMode((prevMode) => (prevMode === 'light' ? 'dark' : 'light'));
-  };
-
-  const theme = useMemo(() => createTheme({
-    palette: {
-      mode, 
-      primary: {
-        main: '#ff0000',
-      },
-    },
-    typography: {
-      fontFamily: "'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
+  useEffect(() => {
+    const root = window.document.documentElement;
+    if (mode === 'dark') {
+      root.classList.add('dark');
+    } else {
+      root.classList.remove('dark');
     }
-  }), [mode]);
+    localStorage.setItem('theme', mode);
+  }, [mode]);
+
+  const toggleTheme = () => setMode((prev) => (prev === 'light' ? 'dark' : 'light'));
 
   return (
     <ThemeContext.Provider value={{ mode, toggleTheme }}>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        {children}
-      </ThemeProvider>
+      {children}
     </ThemeContext.Provider>
   );
+};
+
+export const useThemeContext = () => {
+  const context = useContext(ThemeContext);
+  if (!context) throw new Error("useThemeContext must be used within ThemeProvider");
+  return context;
 };
